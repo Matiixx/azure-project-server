@@ -4,6 +4,8 @@
     "module": "commonjs",
     "outDir": "./dist",
     "strict": true,
-    "esModuleInterop": true
+    "esModuleInterop": true,
+    "lib": ["ES2021", "DOM"],
+    "moduleResolution": "node"
   }
 }
