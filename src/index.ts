@@ -8,7 +8,7 @@ const app = express();
 const port = process.env.PORT || 3001;
 
 const config: sql.config = {
-  user: "nimda",
+  user: process.env.SERVER_ADMIN_LOGIN,
   password: process.env.SERVER_ADMIN_PASSWORD,
   server: "agonista-receptorow-dopaminergicznych.database.windows.net",
   database: "anhedonia",
