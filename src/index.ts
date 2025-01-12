@@ -20,6 +20,13 @@ const config: sql.config = {
   },
 };
 
+app.get("/", (_req, res) => {
+  console.log("Hello world!");
+  console.log(process.env.SERVER_ADMIN_PASSWORD);
+
+  res.send("Hello world!");
+});
+
 app.listen(port, async () => {
   console.log(`Server running on port ${port}`);
   let connection: sql.ConnectionPool | undefined;
