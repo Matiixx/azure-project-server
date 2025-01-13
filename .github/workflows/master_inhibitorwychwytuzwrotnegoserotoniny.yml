@@ -30,11 +30,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: node-app
-          path: |
-            index.js
-            package.json
-            package-lock.json
-            .env
+          path: .
 
   deploy:
     runs-on: ubuntu-latest
@@ -56,4 +52,4 @@ jobs:
           app-name: "InhibitorWychwytuZwrotnegoSerotoniny"
           slot-name: "Production"
           package: .
-          publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_3818BFE36CE9452783D1D1B50A8095C0 }}
+          publish-profile: ${{ secrets.AzureAppService_PublishProfile_3cf1f591f49a4e3dbc60e836321dbdfa }}
