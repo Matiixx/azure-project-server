@@ -24,7 +24,6 @@ jobs:
       - name: npm install
         run: |
           npm install
-          npm install node-pre-gyp -g
           npm rebuild bcrypt --build-from-source
 
       - name: Upload artifact for deployment job
