@@ -21,8 +21,9 @@ jobs:
         with:
           node-version: "20.x"
 
-      - name: npm install, build, and test
+      - name: remove node_modules, npm install
         run: |
+          rm -rf node_modules
           npm install
 
       - name: Upload artifact for deployment job
