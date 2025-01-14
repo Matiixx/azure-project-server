@@ -22,15 +22,4 @@ const config = {
 
 app.listen(port, async () => {
   console.log(`Server running on port ${port}`);
-  let connection = undefined;
-  try {
-    connection = await sql.connect(config);
-    const result = await sql.query`SELECT TOP 10 * FROM Ratings`;
-    console.log(result);
-    await connection.close();
-  } catch (err) {
-    console.error(err);
-  } finally {
-    await connection?.close();
-  }
 });
