@@ -23,7 +23,7 @@ jobs:
 
       - name: remove node_modules, npm install
         run: |
-          rm -rf node_modules
+          rm -r node_modules
           npm install
 
       - name: Upload artifact for deployment job
