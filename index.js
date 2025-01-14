@@ -5,7 +5,6 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const cors = require('cors');
 
-
 const app = express()
 
 app.use(express.json());
@@ -14,7 +13,6 @@ app.use(cors());
 dotenv.config();
 
 const JWT_SECRET = process.env.JWT_SECRET;
-
 
 const config = {
   user: process.env.SERVER_ADMIN_LOGIN,
