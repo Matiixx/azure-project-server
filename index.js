@@ -174,10 +174,61 @@ app.get("/books", withJWT, async (req, res) => {
   try {
     connection = await sql.connect(config);
     const books = await sql.query`SELECT * FROM Books`;
-    res.send(books.recordset);
+    const ratings = await sql.query`SELECT * FROM Ratings`;
+
+    const booksWithRatings = books.recordset.map((book) => {
+      const myRating = ratings.recordset.find(
+        (rating) =>
+          rating.ItemID === book.BookID && rating.UserID === req.user.id
+      );
+
+      const ratingsOfBook = ratings.recordset.filter(
+        (rating) => rating.ItemID === book.BookID
+      );
+
+      const avgRatingOfBook =
+        ratingsOfBook.reduce((acc, curr) => acc + curr.Score, 0.0) /
+        ratingsOfBook.length;
+
+      return { ...book, myRating: myRating?.Score, avgRating: avgRatingOfBook };
+    });
+
+    res.send(booksWithRatings);
   } catch (err) {
     console.error(err);
     res.status(500).send("Internal server error");
+  } finally {
+    await connection?.close();
+  }
+});
+
+app.post("/rating", withJWT, async (req, res) => {
+  const { bookId, score } = req.body;
+
+  if (!bookId || !score || isNaN(score)) {
+    res.status(400).send("Missing data");
+    return;
+  }
+
+  let connection = undefined;
+  try {
+    connection = await sql.connect(config);
+
+    const isDuplication =
+      await sql.query`SELECT * FROM Ratings WHERE ItemID = ${bookId} AND UserID = ${req.user.id}`;
+
+    if (isDuplication.recordset.length > 0) {
+      await sql.query`UPDATE Ratings SET Score = ${parseInt(
+        score
+      )} WHERE ItemID = ${bookId} AND UserID = ${req.user.id}`;
+      res.send(true);
+      return;
+    }
+
+    await sql.query`INSERT INTO Ratings (UserID, ItemID, ItemType, Score, Comment) VALUES (${req.user.id}, ${bookId}, 'Book', ${score}, '')`;
+    res.send(true);
+  } catch (err) {
+    console.error(err);
   } finally {
     await connection?.close();
   }
