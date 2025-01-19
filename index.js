@@ -45,7 +45,7 @@ const withJWT = (req, res, next) => {
 };
 
 app.get("/", (req, res) => {
-  res.send("Hello World!", process.env);
+  res.send("Hello World!" + JSON.stringify(process.env));
 });
 
 app.post("/login", async (req, res) => {

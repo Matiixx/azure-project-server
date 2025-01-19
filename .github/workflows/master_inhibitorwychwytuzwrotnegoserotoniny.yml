@@ -24,6 +24,13 @@ jobs:
       - name: npm install
         run: |
           npm install
+        env:
+          SERVER_ADMIN_LOGIN: ${{ secrets.SERVER_ADMIN_LOGIN }}
+          SERVER_ADMIN_PASSWORD: ${{ secrets.SERVER_ADMIN_PASSWORD }}
+          SERVER_URL: ${{ secrets.SERVER_URL }}
+          DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+          PORT: ${{ secrets.PORT }}
+          JWT_SECRET: ${{ secrets.JWT_SECRET }}
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
