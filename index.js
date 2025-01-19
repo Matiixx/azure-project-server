@@ -45,7 +45,7 @@ const withJWT = (req, res, next) => {
 };
 
 app.get("/", (req, res) => {
-  res.send("Hello World!");
+  res.send("Hello World!", process.env);
 });
 
 app.post("/login", async (req, res) => {
@@ -65,8 +65,6 @@ app.post("/login", async (req, res) => {
 
     const isPasswordValid = await bcrypt.compare(password, passwordHash);
     if (!isPasswordValid) {
-      console.log("isPasswordValid");
-
       res.status(401).send("Invalid email or password");
       return;
     }
