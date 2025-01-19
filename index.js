@@ -45,8 +45,6 @@ const withJWT = (req, res, next) => {
 };
 
 app.get("/", (req, res) => {
-  console.log(JSON.stringify(process.env.SERVER_ADMIN_LOGIN));
-
   res.send("Hello World!");
 });
 
@@ -240,4 +238,77 @@ app.post("/rating", withJWT, async (req, res) => {
   }
 });
 
+app.get("/my-books", withJWT, async (req, res) => {
+  let connection = undefined;
+  try {
+    connection = await sql.connect(config);
+    const books =
+      await sql.query`SELECT * FROM Books WHERE AddedBy = ${req.user.id}`;
+
+    const ratingsOfMyBooks =
+      await sql.query`SELECT * FROM Ratings WHERE ItemID IN (SELECT BookID FROM Books WHERE AddedBy = ${req.user.id})`;
+
+    const booksWithRatings = books.recordset.map((book) => {
+      const myRating = ratingsOfMyBooks.recordset.find(
+        (rating) =>
+          rating.ItemID === book.BookID && rating.UserID === req.user.id
+      );
+
+      const ratingsOfBook = ratingsOfMyBooks.recordset.filter(
+        (rating) => rating.ItemID === book.BookID
+      );
+
+      const avgRatingOfBook =
+        ratingsOfBook.reduce((acc, curr) => acc + curr.Score, 0.0) /
+        ratingsOfBook.length;
+
+      return { ...book, myRating: myRating?.Score, avgRating: avgRatingOfBook };
+    });
+
+    res.send(booksWithRatings);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Internal server error");
+  } finally {
+    await connection?.close();
+  }
+});
+
+app.delete("/books/:bookId", withJWT, async (req, res) => {
+  const { bookId } = req.params;
+
+  let connection = undefined;
+  try {
+    connection = await sql.connect(config);
+
+    const transaction = new sql.Transaction(connection);
+    await transaction.begin();
+
+    try {
+      await transaction
+        .request()
+        .input("bookId", sql.Int, bookId)
+        .input("userId", sql.Int, req.user.id)
+        .query(
+          "DELETE FROM Books WHERE BookID = @bookId AND AddedBy = @userId"
+        );
+
+      await transaction
+        .request()
+        .input("bookId", sql.Int, bookId)
+        .query("DELETE FROM Ratings WHERE ItemID = @bookId");
+
+      await transaction.commit();
+      res.send(true);
+    } catch (err) {
+      await transaction.rollback();
+      throw err;
+    }
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Error deleting book");
+  } finally {
+    await connection?.close();
+  }
+});
 module.exports = app;
