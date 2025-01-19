@@ -52,9 +52,9 @@ jobs:
           slot-name: "Production"
           package: .
           publish-profile: ${{ secrets.AZUREAPPSERVICE_PUBLISHPROFILE_1AFF7462E01C424C972B42512773A3EB }}
-        env:
-          SERVER_ADMIN_LOGIN: ${{ secrets.SERVER_ADMIN_LOGIN }}
-          SERVER_ADMIN_PASSWORD: ${{ secrets.SERVER_ADMIN_PASSWORD }}
-          SERVER_URL: ${{ secrets.SERVER_URL }}
-          DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
-          JWT_SECRET: ${{ secrets.JWT_SECRET }}
+        # env:
+        #   SERVER_ADMIN_LOGIN: ${{ secrets.SERVER_ADMIN_LOGIN }}
+        #   SERVER_ADMIN_PASSWORD: ${{ secrets.SERVER_ADMIN_PASSWORD }}
+        #   SERVER_URL: ${{ secrets.SERVER_URL }}
+        #   DATABASE_NAME: ${{ secrets.DATABASE_NAME }}
+        #   JWT_SECRET: ${{ secrets.JWT_SECRET }}
