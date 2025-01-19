@@ -214,6 +214,12 @@ app.post("/rating", withJWT, async (req, res) => {
   try {
     connection = await sql.connect(config);
 
+    if (score === -1) {
+      await sql.query`DELETE FROM Ratings WHERE ItemID = ${bookId} AND UserID = ${req.user.id}`;
+      res.send(true);
+      return;
+    }
+
     const isDuplication =
       await sql.query`SELECT * FROM Ratings WHERE ItemID = ${bookId} AND UserID = ${req.user.id}`;
 
