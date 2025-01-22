@@ -4,6 +4,7 @@ const dotenv = require("dotenv");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const cors = require("cors");
+let appInsights = require("applicationinsights");
 
 const app = express();
 
@@ -27,6 +28,12 @@ const config = {
   },
 };
 
+appInsights
+  .setup(process.env.APPLICATIONINSIGHTS_CONNECTION_STRING)
+  .setAutoCollectConsole(true, true)
+  .setAutoCollectExceptions(true)
+  .start();
+
 const withJWT = (req, res, next) => {
   const token = req.headers.authorization?.split(" ")?.[1];
 
@@ -43,6 +50,27 @@ const withJWT = (req, res, next) => {
     res.status(401).send("Invalid token");
   }
 };
+
+const client = appInsights.defaultClient;
+
+app.use((req, res, next) => {
+  const start = Date.now();
+  res.on("finish", () => {
+    const duration = Date.now() - start;
+    client.trackRequest({
+      name: req.method + " " + req.url,
+      url: req.url,
+      duration: duration,
+      resultCode: res.statusCode,
+      success: res.statusCode < 400,
+      properties: {
+        method: req.method,
+        userId: req.user ? req.user.id : "anonymous",
+      },
+    });
+  });
+  next();
+});
 
 app.get("/", (req, res) => {
   res.send("Hello World!");

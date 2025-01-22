@@ -14,6 +14,7 @@
     "@types/express": "^5.0.0",
     "@types/mssql": "^9.1.6",
     "@types/node": "^22.10.5",
+    "applicationinsights": "^3.4.0",
     "bcryptjs": "^2.4.3",
     "cors": "^2.8.5",
     "dotenv": "^16.4.7",
